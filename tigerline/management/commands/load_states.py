@@ -16,26 +16,18 @@ from tigerline.models import State
 
 
 def state_import(state_shp):
-    if '2012' in state_shp or '2011' in state_shp:
-        state_mapping = {
-            'fips_code': 'STATEFP',
-            'usps_code': 'STUSPS',
-            'name': 'NAME',
-            'area_description_code': 'LSAD',
-            'feature_class_code': 'MTFCC',
-            'functional_status': 'FUNCSTAT',
-            'mpoly': 'POLYGON',
-        }
-    else:
-        state_mapping = {
-            'fips_code': 'STATEFP10',
-            'usps_code': 'STUSPS10',
-            'name': 'NAME10',
-            'area_description_code': 'LSAD10',
-            'feature_class_code': 'MTFCC10',
-            'functional_status': 'FUNCSTAT10',
-            'mpoly': 'POLYGON',
-        }
+    state_mapping = {
+        'id': 'GEOID',
+        'fips_code': 'STATEFP',
+        'region': 'REGION',
+        'division': 'DIVISION',
+        'usps_code': 'STUSPS',
+        'name': 'NAME',
+        #'area_description_code': 'LSAD',
+        #'feature_class_code': 'MTFCC',
+        #'functional_status': 'FUNCSTAT',
+        'mpoly': 'POLYGON',
+    }
     lm = LayerMapping(State, state_shp, state_mapping)
     lm.save(verbose=True)
 
@@ -45,7 +37,7 @@ class Command(BaseCommand):
         make_option('--path', default='', dest='path',
             help='The directory where the state data is stored.'),
     )
-    help = 'Installs the 2010 tigerline files for states'
+    help = 'Installs the 2012 tigerline files for states'
 
     def handle(self, *args, **kwargs):
         path = kwargs['path']
@@ -53,20 +45,15 @@ class Command(BaseCommand):
         # With DEBUG on this will DIE.
         settings.DEBUG = False
 
+        # Check for existance of shape files
         if os.path.exists(os.path.join(path, 'tl_2012_us_state')):
             print('Found 2012 files.')
             path = os.path.join(path, 'tl_2012_us_state/tl_2012_us_state.shp')
-        elif os.path.exists(os.path.join(path, 'tl_2011_us_state')):
-            print('Found 2011 files.')
-            path = os.path.join(path, 'tl_2011_us_state/tl_2011_us_state.shp')
-        elif os.path.exists(os.path.join(path, 'tl_2010_us_state10')):
-            print('Found 2010 files.')
-            path = os.path.join(path, 'tl_2010_us_state10/tl_2010_us_state10.shp')
         else:
             print('Could not find files.')
             exit()
 
-        print("Start States: %s" % datetime.datetime.now())
+        print ("Start States: %s" % datetime.datetime.now())
         if path:
             state_import(path)
-        print("End States: %s" % datetime.datetime.now())
+        print ("End States: %s" % datetime.datetime.now())

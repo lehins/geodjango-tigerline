@@ -31,5 +31,6 @@ class Command(BaseCommand):
         call_command('load_zipcodes', path=path)
         call_command('load_states', path=path)
         call_command('load_counties', path=path)
+        call_command('load_subcounties', path=path)
 
         print("All Finished: %s" % datetime.datetime.now())

@@ -12,38 +12,24 @@ except ImportError:
     print("gdal is required")
     sys.exit(1)
 
-from tigerline.models import County
+from tigerline.models import State, County
 
 
 def county_import(county_shp):
-    if '2012' in county_shp or '2011' in county_shp:
-        county_mapping = {
-            'state_fips_code': 'STATEFP',
-            'fips_code': 'COUNTYFP',
-            'county_identifier': 'GEOID',
-            'name': 'NAME',
-            'name_and_description': 'NAMELSAD',
-            'legal_statistical_description': 'LSAD',
-            'fips_55_class_code': 'CLASSFP',
-            'feature_class_code': 'MTFCC',
-            'functional_status': 'FUNCSTAT',
-            'mpoly': 'POLYGON',
-        }
-    else:
-        county_mapping = {
-            'state_fips_code': 'STATEFP10',
-            'fips_code': 'COUNTYFP10',
-            'county_identifier': 'GEOID10',
-            'name': 'NAME10',
-            'name_and_description': 'NAMELSAD10',
-            'legal_statistical_description': 'LSAD10',
-            'fips_55_class_code': 'CLASSFP10',
-            'feature_class_code': 'MTFCC10',
-            'functional_status': 'FUNCSTAT10',
-            'mpoly': 'POLYGON',
-        }
+    county_mapping = {
+        'id': 'GEOID',
+        'fips_code': 'COUNTYFP',
+        'state_fips_code': 'STATEFP',
+        'name': 'NAME',
+        'name_and_description': 'NAMELSAD',
+        'legal_statistical_description': 'LSAD',
+        'fips_55_class_code': 'CLASSFP',
+        #'feature_class_code': 'MTFCC',
+        'functional_status': 'FUNCSTAT',
+        'mpoly': 'POLYGON',
+    }
     lm = LayerMapping(County, county_shp, county_mapping, encoding='LATIN1')
-    lm.save(verbose=True)
+    lm.save(verbose=True, progress=True)
 
 
 class Command(BaseCommand):
@@ -51,7 +37,7 @@ class Command(BaseCommand):
         make_option('--path', default='', dest='path',
             help='The directory where the county data is stored.'),
     )
-    help = 'Installs the 2010 tigerline files for counties'
+    help = 'Installs the 2012 tigerline files for counties'
 
     def handle(self, *args, **kwargs):
         path = kwargs['path']
@@ -59,16 +45,10 @@ class Command(BaseCommand):
         # With DEBUG on this will DIE.
         settings.DEBUG = False
 
-        # figure out which path we want to use.
+        # Check for existance of shape files
         if os.path.exists(os.path.join(path, 'tl_2012_us_county')):
             print('Found 2012 files.')
             path = os.path.join(path, 'tl_2012_us_county/tl_2012_us_county.shp')
-        elif os.path.exists(os.path.join(path, 'tl_2011_us_county')):
-            print('Found 2011 files.')
-            path = os.path.join(path, 'tl_2011_us_county/tl_2011_us_county.shp')
-        elif os.path.exists(os.path.join(path, 'tl_2010_us_county10')):
-            print('Found 2010 files.')
-            path = os.path.join(path, 'tl_2010_us_county10/tl_2010_us_county10.shp')
         else:
             print('Could not find files.')
             exit()
@@ -77,3 +57,18 @@ class Command(BaseCommand):
         if path:
             county_import(path)
         print("End Counties: %s" % datetime.datetime.now())
+        self._post_import()
+
+    def _post_import(self, step=1000):
+        states = dict([(x.fips_code, x) for x in 
+                       State.objects.order_by('fips_code')])
+        counties = County.objects.filter(state=None).order_by('pk')
+        total = counties.count()
+        for i in range(0, (total/step)+1):
+            start, end = i*step, (i+1)*step-1
+            cs = counties[start:end]
+            for c in cs:
+                c.state = states[c.state_fips_code]
+                c.save()
+                print "Updated: %s" % c
+            print "Processed so far: %s" % (start+len(cs))
