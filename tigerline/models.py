@@ -55,13 +55,6 @@ class KMLModel(SmartFieldsBaseModel):
             }
         }
 
-    def get_kml(self, profile_name=None):
-        if not self.kml_file:
-            self.smart_fields_save(self)
-        if not profile_name or profile_name == 'original':
-            return self.kml_file
-        return self.smart_fields['kml_file'][profile_name]
-        
     class Meta:
         abstract = True
 
