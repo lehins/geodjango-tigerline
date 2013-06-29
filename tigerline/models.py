@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 from tigerline.codes import *
-from smart_fields.models import SmartKMLFileField, SmartFieldsBaseModel
+from smart_fields.models import SmartKMLField, SmartFieldsBaseModel
 
 import os, simplekml
 
@@ -32,7 +32,7 @@ class KMLModel(SmartFieldsBaseModel):
             str(getattr(self, 'state_id', '')), str(getattr(self, 'county_id', '')),
             "%s.kml" % self.pk)
 
-    kml_file = SmartKMLFileField(
+    kml_file = SmartKMLField(
         null=True, upload_to=upload_to, storage=FileSystemStorage(
             location=LOCATION, base_url=BASE_URL))
 
