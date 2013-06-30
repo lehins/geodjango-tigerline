@@ -12,7 +12,6 @@ class KMLView(SingleObjectMixin, View):
     http_method_names = ['get']
 
     @method_decorator(gzip_page)
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(KMLView, self).dispatch(*args, **kwargs)
 
