@@ -28,8 +28,12 @@ class Command(BaseCommand):
         print("Start SubCounties: %s" % datetime.datetime.now())
         subcounty_mapping = {
             'id': 'GEOID',
-            'state_fips_code': 'STATEFP',
-            'county_fips_code': 'COUNTYFP',
+            'state': {
+                'id': 'STATEFP',
+            }
+            'county': {
+                'id': 'COUNTYFP',
+            }
             'fips_code': 'COUSUBFP',
             'name': 'NAME',
             'name_and_description': 'NAMELSAD',
@@ -38,6 +42,7 @@ class Command(BaseCommand):
             #'feature_class_code': 'MTFCC',
             'functional_status': 'FUNCSTAT',
             'mpoly': 'POLYGON',
+            'aland': 'ALAND',
         }
         lm = LayerMapping(SubCounty, subcounty_shp, subcounty_mapping, 
                           encoding='LATIN1')
@@ -68,23 +73,3 @@ class Command(BaseCommand):
             else:
                 print ('NOT found files for state %s - %s .' % (
                     state.fips_code, state))
-        self._post_import(states_imported=states_imported)
-                    
-    def _post_import(self, states_imported=None, step=1000):
-        states = dict([(x.fips_code, x) for x in 
-                       State.objects.order_by('fips_code')])
-        subcounties = SubCounty.objects.filter(
-            Q(state=None) | Q(county=None)).order_by('pk')
-        if states_imported:
-            subcounties = subcounties.filter(state_fips_code__in=states_imported)
-        total = subcounties.count()
-        for i in range(0, (total/step)+1):
-            start, end = i*step, (i+1)*step-1
-            scs = subcounties[start:end]
-            for s in scs:
-                s.state = states[s.state_fips_code]
-                s.county = County.objects.get(
-                    state_fips_code=s.state_fips_code, fips_code=s.county_fips_code)
-                s.save()
-                print "Updated: %s" % s
-            print "Processed so far: %s" % (start+len(scs))

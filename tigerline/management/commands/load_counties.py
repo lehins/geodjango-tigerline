@@ -19,7 +19,9 @@ def county_import(county_shp):
     county_mapping = {
         'id': 'GEOID',
         'fips_code': 'COUNTYFP',
-        'state_fips_code': 'STATEFP',
+        'state': {
+            'id': 'STATEFP',
+        },
         'name': 'NAME',
         'name_and_description': 'NAMELSAD',
         'legal_statistical_description': 'LSAD',
@@ -58,14 +60,3 @@ class Command(BaseCommand):
         if path:
             county_import(path)
         print("End Counties: %s" % datetime.datetime.now())
-        self._post_import()
-
-    def _post_import(self, step=1000):
-        count = 0
-        for c in County.objects.all():
-            c.state_id = int(c.state_fips_code)
-            c.save()
-            print "Updated: %s" % c
-            count+= 1
-            if (count % step) == 0:
-                print "Processed so far: %s" % count
