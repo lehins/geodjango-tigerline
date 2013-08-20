@@ -27,6 +27,7 @@ def county_import(county_shp):
         #'feature_class_code': 'MTFCC',
         'functional_status': 'FUNCSTAT',
         'mpoly': 'POLYGON',
+        'aland': 'ALAND',
     }
     lm = LayerMapping(County, county_shp, county_mapping, encoding='LATIN1')
     lm.save(verbose=True, progress=True)
@@ -60,15 +61,11 @@ class Command(BaseCommand):
         self._post_import()
 
     def _post_import(self, step=1000):
-        states = dict([(x.fips_code, x) for x in 
-                       State.objects.order_by('fips_code')])
-        counties = County.objects.filter(state=None).order_by('pk')
-        total = counties.count()
-        for i in range(0, (total/step)+1):
-            start, end = i*step, (i+1)*step-1
-            cs = counties[start:end]
-            for c in cs:
-                c.state = states[c.state_fips_code]
-                c.save()
-                print "Updated: %s" % c
-            print "Processed so far: %s" % (start+len(cs))
+        count = 0
+        for c in County.objects.all():
+            c.state_id = int(c.state_fips_code)
+            c.save()
+            print "Updated: %s" % c
+            count+= 1
+            if (count % step) == 0:
+                print "Processed so far: %s" % count
