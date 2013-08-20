@@ -27,6 +27,7 @@ def state_import(state_shp):
         #'feature_class_code': 'MTFCC',
         #'functional_status': 'FUNCSTAT',
         'mpoly': 'POLYGON',
+        'aland': 'ALAND',
     }
     lm = LayerMapping(State, state_shp, state_mapping)
     lm.save(verbose=True)

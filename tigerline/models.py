@@ -69,6 +69,9 @@ class Nation(KMLModel):
     def legal_name(self):
         return self.name
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -81,6 +84,9 @@ class Division(KMLModel):
 
     @property
     def legal_name(self):
+        return self.name
+
+    def __str__(self):
         return self.name
 
     def __unicode__(self):
@@ -101,11 +107,15 @@ class State(KMLModel):
     #feature_class_code = models.CharField(max_length=5)
     #functional_status = models.CharField(max_length=1)
     mpoly = models.MultiPolygonField()
+    aland = models.BigIntegerField(null=True)
 
     objects = models.GeoManager()
 
     @property
     def legal_name(self):
+        return self.name
+
+    def __str__(self):
         return self.name
 
     def __unicode__(self):
@@ -130,6 +140,7 @@ class County(KMLModel):
     functional_status = models.CharField(
         max_length=1, choices=COUNTY_FUNCTIONAL_STATUS)
     mpoly = models.MultiPolygonField()
+    aland = models.BigIntegerField(null=True)
 
     objects = models.GeoManager()
 
@@ -139,6 +150,8 @@ class County(KMLModel):
             self.legal_statistical_description, ''))
         return name
 
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -164,6 +177,7 @@ class SubCounty(KMLModel):
     functional_status = models.CharField(
         max_length=1, choices=SUBCOUNTY_FUNCTIONAL_STATUS)
     mpoly = models.MultiPolygonField()
+    aland = models.BigIntegerField(null=True)
 
     objects = models.GeoManager()
 
@@ -179,6 +193,9 @@ class SubCounty(KMLModel):
         elif p_or_s == 's':
             name = "%s %s" % (name, descr)
         return name
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
