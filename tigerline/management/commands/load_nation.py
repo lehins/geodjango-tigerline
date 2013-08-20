@@ -9,7 +9,7 @@ from tigerline.models import State, Division
 
 
 class Command(BaseCommand):
-    help = 'Installs the 2012 tigerline files for Nation'
+    help = 'Installs the 2012 tigerline files for the Nation'
 
     def handle(self, *args, **kwargs):
         states = State.objects.all()

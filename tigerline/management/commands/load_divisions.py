@@ -12,6 +12,7 @@ class Command(BaseCommand):
     help = 'Installs the 2012 tigerline files for divisions'
 
     def handle(self, *args, **kwargs):
+        # TODO: make the tolerance as an option to set
         for division_id, division_name in DIVISIONS:
             print "Started %s" % division_name
             states = State.objects.filter(division=division_id)

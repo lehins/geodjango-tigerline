@@ -2,11 +2,9 @@ import datetime
 import os
 import sys
 from optparse import make_option
-from itertools import product
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.db.models import Q
 
 try:
     from django.contrib.gis.utils import LayerMapping
@@ -45,8 +43,8 @@ class Command(BaseCommand):
             'mpoly': 'POLYGON',
             'aland': 'ALAND',
         }
-        lm = LayerMapping(SubCounty, subcounty_shp, subcounty_mapping, 
-                          encoding='LATIN1')
+        lm = LayerMapping(
+            SubCounty, subcounty_shp, subcounty_mapping, encoding='LATIN1')
         lm.save(verbose=True, progress=True, strict=True)
         print("End SubCounties: %s" % datetime.datetime.now())
 

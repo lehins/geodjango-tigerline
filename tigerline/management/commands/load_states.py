@@ -15,30 +15,29 @@ except ImportError:
 from tigerline.models import State
 
 
-def state_import(state_shp):
-    state_mapping = {
-        'id': 'GEOID',
-        'fips_code': 'STATEFP',
-        'region': 'REGION',
-        'division': 'DIVISION',
-        'usps_code': 'STUSPS',
-        'name': 'NAME',
-        #'area_description_code': 'LSAD',
-        #'feature_class_code': 'MTFCC',
-        #'functional_status': 'FUNCSTAT',
-        'mpoly': 'POLYGON',
-        'aland': 'ALAND',
-    }
-    lm = LayerMapping(State, state_shp, state_mapping)
-    lm.save(verbose=True)
-
-
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--path', default='', dest='path',
             help='The directory where the state data is stored.'),
     )
     help = 'Installs the 2012 tigerline files for states'
+
+    def _import(state_shp):
+        state_mapping = {
+            'id': 'GEOID',
+            'fips_code': 'STATEFP',
+            'region': 'REGION',
+            'division': 'DIVISION',
+            'usps_code': 'STUSPS',
+            'name': 'NAME',
+            #'area_description_code': 'LSAD',
+            #'feature_class_code': 'MTFCC',
+            #'functional_status': 'FUNCSTAT',
+            'mpoly': 'POLYGON',
+            'aland': 'ALAND',
+        }
+        lm = LayerMapping(State, state_shp, state_mapping, encoding='LATIN1')
+        lm.save(verbose=True, progress=True, strict=True)
 
     def handle(self, *args, **kwargs):
         path = kwargs['path']
@@ -56,5 +55,5 @@ class Command(BaseCommand):
 
         print ("Start States: %s" % datetime.datetime.now())
         if path:
-            state_import(path)
+            self._import(path)
         print ("End States: %s" % datetime.datetime.now())

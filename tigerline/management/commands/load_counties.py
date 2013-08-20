@@ -15,33 +15,32 @@ except ImportError:
 from tigerline.models import State, County
 
 
-def county_import(county_shp):
-    county_mapping = {
-        'id': 'GEOID',
-        'fips_code': 'COUNTYFP',
-        'state_fips_code': 'STATEFP',
-        'state': {
-            'id': 'STATEFP',
-        },
-        'name': 'NAME',
-        'name_and_description': 'NAMELSAD',
-        'legal_statistical_description': 'LSAD',
-        'fips_55_class_code': 'CLASSFP',
-        #'feature_class_code': 'MTFCC',
-        'functional_status': 'FUNCSTAT',
-        'mpoly': 'POLYGON',
-        'aland': 'ALAND',
-    }
-    lm = LayerMapping(County, county_shp, county_mapping, encoding='LATIN1')
-    lm.save(verbose=True, progress=True)
-
-
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--path', default='', dest='path',
             help='The directory where the county data is stored.'),
     )
     help = 'Installs the 2012 tigerline files for counties'
+
+    def _import(county_shp):
+        county_mapping = {
+            'id': 'GEOID',
+            'fips_code': 'COUNTYFP',
+            'state_fips_code': 'STATEFP',
+            'state': {
+                'id': 'STATEFP',
+            },
+            'name': 'NAME',
+            'name_and_description': 'NAMELSAD',
+            'legal_statistical_description': 'LSAD',
+            'fips_55_class_code': 'CLASSFP',
+            #'feature_class_code': 'MTFCC',
+            'functional_status': 'FUNCSTAT',
+            'mpoly': 'POLYGON',
+            'aland': 'ALAND',
+        }
+        lm = LayerMapping(County, county_shp, county_mapping, encoding='LATIN1')
+        lm.save(verbose=True, progress=True, strict=True)
 
     def handle(self, *args, **kwargs):
         path = kwargs['path']
@@ -59,5 +58,5 @@ class Command(BaseCommand):
 
         print("Start Counties: %s" % datetime.datetime.now())
         if path:
-            county_import(path)
+            self._import(path)
         print("End Counties: %s" % datetime.datetime.now())
