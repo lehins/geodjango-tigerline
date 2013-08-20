@@ -12,6 +12,7 @@ class Command(BaseCommand):
     help = 'Installs the 2012 tigerline files for the Nation'
 
     def handle(self, *args, **kwargs):
+        # TODO: make the tolerance as an option to set
         states = State.objects.all()
         mpoly = states[0].mpoly
         for state in states:
