@@ -30,10 +30,10 @@ class Command(BaseCommand):
             'id': 'GEOID',
             'state': {
                 'id': 'STATEFP',
-            }
+            },
             'county': {
                 'id': 'COUNTYFP',
-            }
+            },
             'fips_code': 'COUSUBFP',
             'name': 'NAME',
             'name_and_description': 'NAMELSAD',
