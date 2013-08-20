@@ -19,6 +19,7 @@ def county_import(county_shp):
     county_mapping = {
         'id': 'GEOID',
         'fips_code': 'COUNTYFP',
+        'state_fips_code': 'STATEFP',
         'state': {
             'id': 'STATEFP',
         },

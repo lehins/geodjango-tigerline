@@ -32,7 +32,8 @@ class Command(BaseCommand):
                 'id': 'STATEFP',
             },
             'county': {
-                'id': 'COUNTYFP',
+                'state_fips_code': 'STATEFP',
+                'fips_code': 'COUNTYFP',
             },
             'fips_code': 'COUSUBFP',
             'name': 'NAME',
