@@ -8,9 +8,6 @@ from smart_fields.models import SmartKMLField, SmartFieldsBaseModel
 
 import os, simplekml
 
-LOCATION = getattr(settings, 'SENDFILE_ROOT', settings.MEDIA_ROOT)
-BASE_URL = getattr(settings, 'SENDFILE_URL', settings.MEDIA_URL)
-
 class Zipcode(models.Model):
     code = models.CharField(max_length=5, db_index=True)
     mpoly = models.MultiPolygonField()
@@ -32,9 +29,7 @@ class KMLModel(SmartFieldsBaseModel):
             str(getattr(self, 'state_id', '')), str(getattr(self, 'county_id', '')),
             "%s.kml" % self.pk)
 
-    kml_file = SmartKMLField(
-        null=True, upload_to=upload_to, storage=FileSystemStorage(
-            location=LOCATION, base_url=BASE_URL))
+    kml_file = SmartKMLField(null=True, upload_to=upload_to)
 
     def kml_processor(self, kml):
         for g in kml.geometries:
