@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.gis.geos import Polygon, MultiPolygon
+from django.contrib.gis.db.models import Union
 from django.core.management.base import BaseCommand
 
 from tigerline.models import *
@@ -14,9 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # TODO: make the tolerance as an option to set
         states = State.objects.all()
-        mpoly = states[0].mpoly
-        for state in states:
-            mpoly = mpoly.union(state.mpoly)
+        mpoly = states.aggregate(Union('mpoly'))['mpoly__union']
         try:
             nation = Nation.objects.get(id='USA')
         except Nation.DoesNotExist:

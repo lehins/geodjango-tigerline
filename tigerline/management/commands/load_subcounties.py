@@ -61,9 +61,8 @@ class Command(BaseCommand):
         # figure out which paths we want to use.
         states_imported = []
         for state in states:
-            path_format = 'tl_2012_%s_cousub/tl_2012_%s_cousub.shp'
-            path = os.path.join(path_base, path_format % (
-                state.fips_code, state.fips_code))
+            path_format = 'tl_2012_%s_cousub.shp'
+            path = os.path.join(path_base, path_format % state.fips_code)
             if os.path.exists(path):
                 print ('Found files for state %s - %s .' % (
                     state.fips_code, state))

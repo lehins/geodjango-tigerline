@@ -22,7 +22,7 @@ class Command(BaseCommand):
     )
     help = 'Installs the 2012 tigerline files for states'
 
-    def _import(state_shp):
+    def _import(self, state_shp):
         state_mapping = {
             'id': 'GEOID',
             'fips_code': 'STATEFP',
@@ -46,14 +46,13 @@ class Command(BaseCommand):
         settings.DEBUG = False
 
         # Check for existance of shape files
-        if os.path.exists(os.path.join(path, 'tl_2012_us_state')):
+        path = os.path.join(path, 'tl_2012_us_state.shp')
+        if os.path.exists(path):
             print('Found 2012 files.')
-            path = os.path.join(path, 'tl_2012_us_state/tl_2012_us_state.shp')
         else:
             print('Could not find files.')
             exit()
 
         print ("Start States: %s" % datetime.datetime.now())
-        if path:
-            self._import(path)
+        self._import(path)
         print ("End States: %s" % datetime.datetime.now())

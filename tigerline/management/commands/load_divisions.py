@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.gis.geos import Polygon, MultiPolygon
+from django.contrib.gis.db.models import Union
 from django.core.management.base import BaseCommand
 
 from tigerline.models import *
@@ -16,9 +17,7 @@ class Command(BaseCommand):
         for division_id, division_name in DIVISIONS:
             print "Started %s" % division_name
             states = State.objects.filter(division=division_id)
-            mpoly = states[0].mpoly
-            for state in states:
-                mpoly = mpoly.union(state.mpoly)
+            mpoly = states.aggregate(Union('mpoly'))['mpoly__union']
             try:
                 division = Division.objects.get(id=division_id)
             except Division.DoesNotExist:
