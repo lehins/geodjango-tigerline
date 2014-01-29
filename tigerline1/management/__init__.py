@@ -10,12 +10,13 @@ except ImportError:
     print("gdal is required")
     sys.exit(1)
 
+from tigerline1.models import get_custom_model
 
 class BaseImportCommand(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--path', default='', dest='path',
                     help='The directory where the data is stored.'),
-        make_option('--mapping', defult='', dest='mapping',
+        make_option('--mapping', default='', dest='mapping',
                     help='JSON file with mapping data.')
     )
     object_name = None

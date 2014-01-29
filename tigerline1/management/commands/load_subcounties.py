@@ -1,73 +1,57 @@
-import datetime
-import os
-import sys
-from optparse import make_option
+import os, sys
+from distutils.util import strtobool
 
-from django.core.management.base import BaseCommand
-from django.conf import settings
-
-try:
-    from django.contrib.gis.utils import LayerMapping
-except ImportError:
-    print("gdal is required")
-    sys.exit(1)
-
-from tigerline.models import State, County, SubCounty
+from tigerline1.models import get_custom_model
+from tigerline1.management import BaseImportCommand
 
 
-class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--path', default='', dest='path',
-            help='The directory where the subcounty data is stored.'),
-    )
-    help = 'Installs the 2012 tigerline files for County Subdivisions'
+class Command(BaseImportCommand):
+    object_name = 'subcounty'
 
-    def _import(self, subcounty_shp):
-        print("Start SubCounties: %s" % datetime.datetime.now())
-        subcounty_mapping = {
-            'id': 'GEOID',
-            'state': {
-                'id': 'STATEFP',
-            },
-            'county': {
-                'state_fips_code': 'STATEFP',
-                'fips_code': 'COUNTYFP',
-            },
-            'fips_code': 'COUSUBFP',
-            'name': 'NAME',
-            'name_and_description': 'NAMELSAD',
-            'legal_statistical_description': 'LSAD',
-            'fips_55_class_code': 'CLASSFP',
-            #'feature_class_code': 'MTFCC',
-            'functional_status': 'FUNCSTAT',
-            'mpoly': 'POLYGON',
-            'aland': 'ALAND',
-        }
-        lm = LayerMapping(
-            SubCounty, subcounty_shp, subcounty_mapping, encoding='LATIN1')
-        lm.save(verbose=True, progress=True, strict=True)
-        print("End SubCounties: %s" % datetime.datetime.now())
+    default_mapping = {
+        "id": "GEOID",
+        "state": {
+            "fips_code": "STATEFP"
+        },
+        "county": {
+            "state_fips_code": "STATEFP",
+            "fips_code": "COUNTYFP"
+        },
+        "fips_code": "COUSUBFP",
+        "name": "NAME",
+        "legal_statistical_description": "LSAD",
+        "mpoly": "POLYGON"
+    }
 
-    def handle(self, *args, **kwargs):
-        path_base = kwargs['path']
-        state_fips_code = kwargs.pop('state_id', None)
-
-        # With DEBUG on this will DIE.
-        settings.DEBUG = False
-
-        states = State.objects.order_by('fips_code')
-        if state_fips_code:
-            states = states.filter(fips_code=state_fips_code)
-        # figure out which paths we want to use.
-        states_imported = []
+    def handle_import(self, path, mapping):
+        names = (
+            ('2013', 'tl_2013_%s_cousub.shp'),
+            ('2012', 'tl_2012_%s_cousub.shp'),
+            ('2011', 'tl_2011_%s_cousub.shp'),
+            ('2010', 'tl_2010_%s_cousub10.shp'),
+        )
+        State = get_custom_model('state')
+        states = State.objects.all()
         for state in states:
-            path_format = 'tl_2012_%s_cousub.shp'
-            path = os.path.join(path_base, path_format % state.fips_code)
-            if os.path.exists(path):
-                print ('Found files for state %s - %s .' % (
-                    state.fips_code, state))
-                self._import(path)
-                states_imported.append(state.fips_code)
+            year = None
+            for year, name in names:
+                check_path = os.path.join(path, name % state.fips_code)
+                print "Trying: %s" % check_path
+                if os.path.exists(check_path):
+                    print('Found %s SubCounty files for: %s.' % (year, state))
+                    self.import_data(check_path, mapping)
+                    break;
             else:
-                print ('NOT found files for state %s - %s .' % (
+                print('Could not find SubCounty files for: %s - %s.' % (
                     state.fips_code, state))
+                incorrect = True
+                while incorrect:
+                    sys.stdout.write("Would you like to continue? [y/N]: ")
+                    answer = raw_input() or 'no'
+                    try:
+                        if not strtobool(answer.lower()):
+                            sys.exit(1)
+                        incorrect = False
+                    except ValueError:
+                        print("Incorrect answer: %s" % answer)
+

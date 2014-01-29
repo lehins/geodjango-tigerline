@@ -1,25 +1,22 @@
-import datetime
-
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.contrib.gis.db.models import Union
 from django.core.management.base import BaseCommand
 
-from tigerline.models import *
-
-from tigerline.models import State, Division
-
+from tigerline1.models import get_custom_model
 
 class Command(BaseCommand):
-    help = 'Installs the 2012 tigerline files for the Nation'
+    help = "Creates Nation model of United States using states' geometry."
 
     def handle(self, *args, **kwargs):
-        # TODO: make the tolerance as an option to set
+        State = get_custom_model('state')
+        Nation = get_custom_model('nation')
         states = State.objects.all()
         mpoly = states.aggregate(Union('mpoly'))['mpoly__union']
         try:
-            nation = Nation.objects.get(id='USA')
+            nation = Nation.objects.get(pk='USA')
+            nation.mpoly = mpoly
+            nation.name = "United Sates of America"
+            nation.save()
         except Nation.DoesNotExist:
-            nation = Nation(id='USA', name="United Sates of America")
-        nation.mpoly = mpoly.simplify(tolerance=0.001, preserve_topology=True)
-        nation.kml_file = None
-        nation.save()
+            Nation.objects.get_or_create(
+                id='USA', name="United Sates of America", mpoly=mpoly)

@@ -4,12 +4,12 @@ from django.db.models.loading import get_model
 __all__ = ['get_model_path', 'get_custom_model', 'is_abstract']
 
 DEFAULT_MODELS = (
-    ('zipcode', 'tigerline.Zipcode'),
-    ('nation', 'tigerline.Nation'),
-    ('division', 'tigerline.Division'),
-    ('state', 'tigerline.State'),
-    ('county', 'tigerline.County'),
-    ('subcounty', 'tigerline.SubCounty')
+    ('zipcode', 'tigerline1.Zipcode'),
+    ('nation', 'tigerline1.Nation'),
+    ('division', 'tigerline1.Division'),
+    ('state', 'tigerline1.State'),
+    ('county', 'tigerline1.County'),
+    ('subcounty', 'tigerline1.SubCounty')
 )
 
 MODELS = getattr(settings, 'TIGERLINE_MODELS', ())

@@ -1,20 +1,38 @@
 from django.contrib.gis import admin
 
-from tigerline.models import State, County, SubCounty
-
 
 #class ZipcodeAdmin(admin.OSMGeoAdmin):
 #    list_display = ('code',)
 #    search_fields = ('code',)
 
 
-#class StateAdmin(admin.OSMGeoAdmin):
-#    list_display = ('name', 'usps_code', 'fips_code')
+class NationAdmin(admin.OSMGeoAdmin):
+    list_display = ('name', 'id')
+    search_fields = ('name',)
+
+class DivisionAdmin(admin.OSMGeoAdmin):
+    list_display = ('name', 'id')
+    search_fields = ('name',)
+
+class StateAdmin(admin.OSMGeoAdmin):
+    list_display = ('name', 'usps_code', 'fips_code')
+    search_fields = ('name', 'fips_code')
 
 
-#class CountyAdmin(admin.OSMGeoAdmin):
-#    list_display = ('id', 'name', 'legal_statistical_description', 'fips_55_class_code', 'functional_status')
-#    search_fields = ('name', 'state_fips_code')
+class CountyAdmin(admin.OSMGeoAdmin):
+    list_display = (
+        'name', 'state', 'fips_code', 'legal_name'
+    )
+    list_filter = ('state',)
+    search_fields = ('name', 'state__name')
+
+class SubCountyAdmin(admin.OSMGeoAdmin):
+    list_display = (
+        'name', 'county', 'state', 'fips_code', 'legal_name'
+    )
+    readonly_fields = ('name', 'county', 'state', 'fips_code', 'legal_name')
+    list_filter = ('state',)
+    search_fields = ('name', 'county__name', 'state__name')
 
 
 #admin.site.register(Zipcode, ZipcodeAdmin)

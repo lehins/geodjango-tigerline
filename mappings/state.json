@@ -1,20 +1,17 @@
 {
-    'id': 'GEOID',                    // State identifier; state FIPS code
-    'region': 'REGION',               // Current Census region code
-    'division': 'DIVISION',           // Current Census division code
-    'fips_code': 'STATEFP',           // Current state Federal Information
-				      //    Processing Series (FIPS) code
-    'ansi_code': 'STATENS',           // Current state ANSI code
-    'usps_code': 'STUSPS',            // Current United States Postal Service
-				      //    state abbreviation
-    'name': 'NAME',                   // Current state name
-    'area_description_code': 'LSAD',  // Current legal/statistical area
-				      //    description code for state
-    'feature_class_code': 'MTFCC',    // MAF/TIGER feature class code
-    'functional_status': 'FUNCSTAT',  // Current functional status
-    'mpoly': 'POLYGON',               // Actual geometry
-    'area_land': 'ALAND',             // Current land area (square meters)
-    'area_water': 'AWATER',           // Current water area (square meters)
-    'lat_int': 'INTPTLAT',            // Current latitude of the internal point
-    'lon_int': 'INTPTLON'             // Current longitude of the internal point
+    "id": "GEOID",
+    "region": "REGION",
+    "division": "DIVISION",
+    "fips_code": "STATEFP",
+    "ansi_code": "STATENS",
+    "usps_code": "STUSPS",
+    "name": "NAME",
+    "area_description_code": "LSAD",
+    "feature_class_code": "MTFCC",
+    "functional_status": "FUNCSTAT",
+    "mpoly": "POLYGON",
+    "area_land": "ALAND",
+    "area_water": "AWATER",
+    "internal_lat": "INTPTLAT",
+    "internal_lon": "INTPTLON"
 }

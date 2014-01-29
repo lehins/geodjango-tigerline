@@ -1,0 +1,23 @@
+{
+    "id": "GEOID",
+    "fips_code": "COUNTYFP",
+    "ansi_code": "COUNTYNS",
+    "state": {
+        "fips_code": "STATEFP"
+    },
+    "state_fips_code": "STATEFP",
+    "name": "NAME",
+    "name_and_description": "NAMELSAD",
+    "legal_statistical_description": "LSAD",
+    "fips_55_class_code": "CLASSFP",
+    "feature_class_code": "MTFCC",
+    "stat_area_code_combined": "CSAFP",
+    "stat_area_code": "CBSAFP",
+    "division_code_metro": "METDIVFP",
+    "functional_status": "FUNCSTAT",
+    "mpoly": "POLYGON",
+    "area_land": "ALAND",
+    "area_water": "AWATER",
+    "internal_lat": "INTPTLAT",
+    "internal_lon": "INTPTLON"
+}

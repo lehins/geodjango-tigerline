@@ -1,0 +1,28 @@
+{
+    "id": "GEOID",
+    "fips_code": "COUSUBFP",
+    "ansi_code": "COUSUBNS",
+    "state": {
+        "fips_code": "STATEFP"
+    },
+    "county": {
+        "fips_code": "COUNTYFP",
+        "state_fips_code": "STATEFP"
+    },
+    "state_fips_code": "STATEFP",
+    "county_fips_code": "COUNTYFP",
+    "name": "NAME",
+    "name_and_description": "NAMELSAD",
+    "legal_statistical_description": "LSAD",
+    "fips_55_class_code": "CLASSFP",
+    "feature_class_code": "MTFCC",
+    "ne_combined_code": "CNECTAFP",
+    "ne_code": "NECTAFP",
+    "ne_division_code": "NCTADVFP",
+    "functional_status": "FUNCSTAT",
+    "mpoly": "POLYGON",
+    "area_land": "ALAND",
+    "area_water": "AWATER",
+    "internal_lat": "INTPTLAT",
+    "internal_lon": "INTPTLON"
+}

@@ -1,27 +1,21 @@
 import os, sys
 
-from tigerline.models import get_custom_model
-from tigerline.management import BaseLoadCommand
+from tigerline1.management import BaseImportCommand
 
 
 class Command(BaseImportCommand):
     object_name = 'county'
 
     default_mapping = {
-        'id': 'GEOID',
-        'fips_code': 'COUNTYFP',
-        'state_fips_code': 'STATEFP',
-        'state': {
-            'id': 'STATEFP',
+        "id": "GEOID",
+        "state": {
+            "fips_code": "STATEFP"
         },
-        'name': 'NAME',
-        'name_and_description': 'NAMELSAD',
-        'legal_statistical_description': 'LSAD',
-        'fips_55_class_code': 'CLASSFP',
-        #'feature_class_code': 'MTFCC',
-        'functional_status': 'FUNCSTAT',
-        'mpoly': 'POLYGON',
-        'aland': 'ALAND',
+        "state_fips_code": "STATEFP",
+        "fips_code": "COUNTYFP",
+        "name": "NAME",
+        "legal_statistical_description": "LSAD",
+        "mpoly": "POLYGON"
     }
 
     def handle_import(self, path, mapping):
@@ -40,5 +34,5 @@ class Command(BaseImportCommand):
         else:
             print('Could not find files.')
             sys.exit(1)
-        print('Found %s %s files.' % (year, self.object_name))
+        print('Found %s %s files.' % (year, self.object_name.title()))
         self.import_data(path, mapping)
