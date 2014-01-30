@@ -1,58 +1,36 @@
-import datetime
-import os
-import sys
-from optparse import make_option
+import os, sys
 
-from django.core.management.base import BaseCommand
-from django.conf import settings
-
-try:
-    from django.contrib.gis.utils import LayerMapping
-except ImportError:
-    print("gdal is required")
-    sys.exit(1)
-
-from tigerline.models import State
+from tigerline.management import BaseImportCommand
 
 
-class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--path', default='', dest='path',
-            help='The directory where the state data is stored.'),
-    )
-    help = 'Installs the 2012 tigerline files for states'
+class Command(BaseImportCommand):
+    object_name = 'state'
 
-    def _import(self, state_shp):
-        state_mapping = {
-            'id': 'GEOID',
-            'fips_code': 'STATEFP',
-            'region': 'REGION',
-            'division': 'DIVISION',
-            'usps_code': 'STUSPS',
-            'name': 'NAME',
-            #'area_description_code': 'LSAD',
-            #'feature_class_code': 'MTFCC',
-            #'functional_status': 'FUNCSTAT',
-            'mpoly': 'POLYGON',
-            'aland': 'ALAND',
-        }
-        lm = LayerMapping(State, state_shp, state_mapping, encoding='LATIN1')
-        lm.save(verbose=True, progress=True, strict=True)
+    default_mapping = {
+        "id": "GEOID",
+        "fips_code": "STATEFP",
+        "usps_code": "STUSPS",
+        "name": "NAME",
+        "region": "REGION",
+        "division": "DIVISION",
+        "mpoly": "POLYGON",
+    }
 
-    def handle(self, *args, **kwargs):
-        path = kwargs['path']
-
-        # With DEBUG on this will DIE.
-        settings.DEBUG = False
-
-        # Check for existance of shape files
-        path = os.path.join(path, 'tl_2012_us_state.shp')
-        if os.path.exists(path):
-            print('Found 2012 files.')
+    def handle_import(self, path, mapping):
+        names = (
+            ('2013', 'tl_2013_us_state.shp'),
+            ('2012', 'tl_2012_us_state.shp'),
+            ('2011', 'tl_2011_us_state.shp'),
+            ('2010', 'tl_2010_us_state10.shp'),
+        )
+        year = None
+        for year, name in names:
+            check_path = os.path.join(path, name)
+            if os.path.exists(check_path):
+                path = check_path
+                break;
         else:
             print('Could not find files.')
-            exit()
-
-        print ("Start States: %s" % datetime.datetime.now())
-        self._import(path)
-        print ("End States: %s" % datetime.datetime.now())
+            sys.exit(1)
+        print('Found %s %s files.' % (year, self.object_name.title()))
+        self.import_data(path, mapping)

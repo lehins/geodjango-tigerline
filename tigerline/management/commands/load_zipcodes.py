@@ -12,7 +12,7 @@ except ImportError:
     print("gdal is required")
     sys.exit(1)
 
-from tigerline.models import Zipcode
+from .models import Zipcode
 
 
 def zipcode_import(zipcode_shp):
