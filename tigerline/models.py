@@ -104,7 +104,7 @@ class County(models.Model):
 
     @property
     def legal_name(self):
-        name = "%s %s" % (self.name, dict(COUNTY_LEGAL_DESCRIPTION).get(
+        name = u"%s %s" % (self.name, dict(COUNTY_LEGAL_DESCRIPTION).get(
             self.legal_statistical_description, ''))
         return name
 
@@ -139,9 +139,9 @@ class SubCounty(models.Model):
         descr = dict(SUBCOUNTY_LEGAL_DESCRIPTION).get(
             self.legal_statistical_description, '')
         if p_or_s == 'p':
-            name = "%s %s" % (descr, name)
+            name = u"%s %s" % (descr, name)
         elif p_or_s == 's':
-            name = "%s %s" % (name, descr)
+            name = u"%s %s" % (name, descr)
         return name
 
     def __str__(self):
