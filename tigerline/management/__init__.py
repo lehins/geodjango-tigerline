@@ -49,7 +49,7 @@ class BaseImportCommand(BaseCommand):
             else:
                 print('Could not find mapping json file: %s.' % mapping_path)
                 sys.exit(1)
-        # With DEBUG=False this will DIE.
+        # With DEBUG=True this will DIE.
         settings.DEBUG = False
         print("Start %s: %s" % (self.object_name, datetime.datetime.now()))
         self.handle_import(path, mapping)

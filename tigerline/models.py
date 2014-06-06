@@ -92,7 +92,7 @@ class State(models.Model):
 
 class County(models.Model):
     id = models.IntegerField(primary_key=True)
-    state = models.ForeignKey(get_model_path('state'), null=True)
+    state = models.ForeignKey(get_model_path('state'), null=True, related_name="county+")
     state_fips_code = models.CharField(max_length=2) 
     fips_code = models.CharField(max_length=3)
     name = models.CharField(max_length=100)
@@ -121,8 +121,8 @@ class County(models.Model):
 
 class SubCounty(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    state = models.ForeignKey(get_model_path('state'), null=True)
-    county = models.ForeignKey(get_model_path('county'), null=True)
+    state = models.ForeignKey(get_model_path('state'), null=True, related_name="subcounty+")
+    county = models.ForeignKey(get_model_path('county'), null=True, related_name="subcounty+")
     fips_code = models.CharField(max_length=5)
     name = models.CharField(max_length=100)
     legal_statistical_description = models.PositiveSmallIntegerField(
