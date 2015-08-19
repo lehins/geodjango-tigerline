@@ -12,6 +12,7 @@ except ImportError:
     print("gdal is required")
     sys.exit(1)
 
+#Old and incompatible command, to be removed.
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (

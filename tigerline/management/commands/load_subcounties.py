@@ -1,12 +1,12 @@
 import os, sys
 from distutils.util import strtobool
 
-from tigerline.models import get_custom_model
 from tigerline.management import BaseImportCommand
+from tigerline.utils import get_tigerline_model
 
 
 class Command(BaseImportCommand):
-    object_name = 'subcounty'
+    setting_name = 'TIGERLINE_SUBCOUNTY_MODEL'
 
     default_mapping = {
         "id": "GEOID",
@@ -25,13 +25,15 @@ class Command(BaseImportCommand):
 
     def handle_import(self, path, mapping):
         names = (
+            ('2015', 'tl_2015_%s_cousub.shp'),
+            ('2014', 'tl_2014_%s_cousub.shp'),
             ('2013', 'tl_2013_%s_cousub.shp'),
             ('2012', 'tl_2012_%s_cousub.shp'),
             ('2011', 'tl_2011_%s_cousub.shp'),
-            ('2010', 'tl_2010_%s_cousub10.shp'),
+            ('2010', 'tl_2010_%s_cousub10.shp')
         )
-        State = get_custom_model('state')
-        states = State.objects.all()
+        State = get_tigerline_model('TIGERLINE_STATE_MODEL')
+        states = State.objects.filter(id__gte=25).order_by('id')
         for state in states:
             year = None
             for year, name in names:
@@ -40,7 +42,7 @@ class Command(BaseImportCommand):
                 if os.path.exists(check_path):
                     print('Found %s SubCounty files for: %s.' % (year, state))
                     self.import_data(check_path, mapping)
-                    break;
+                    break
             else:
                 print('Could not find SubCounty files for: %s - %s.' % (
                     state.fips_code, state))

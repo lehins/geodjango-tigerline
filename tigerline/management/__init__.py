@@ -10,7 +10,7 @@ except ImportError:
     print("gdal is required")
     sys.exit(1)
 
-from tigerline.models import get_custom_model
+from tigerline.utils import get_tigerline_model, get_tigerline_model_name
 
 class BaseImportCommand(BaseCommand):
     option_list = BaseCommand.option_list + (
@@ -19,23 +19,31 @@ class BaseImportCommand(BaseCommand):
         make_option('--mapping', default='', dest='mapping',
                     help='JSON file with mapping data.')
     )
-    object_name = None
+    setting_name = None
     default_mapping = None
 
     @property
+    def model_name(self):
+        return get_tigerline_model_name(self.setting_name)
+
+    @property
+    def model(self):
+        return get_tigerline_model(self.setting_name)
+    
+    @property
     def help(self):
-        return 'Installs the tigerline files for %s' % self.object_name
+        return 'Installs the tigerline files for %s' % self.setting_name
 
 
     def import_data(self, shp, mapping=None):
         mapping = mapping or self.default_mapping
-        lm = LayerMapping(get_custom_model(self.object_name),
+        lm = LayerMapping(get_tigerline_model(self.setting_name),
                           shp, mapping, encoding='LATIN1')
         lm.save(verbose=True, progress=True, strict=True)
 
     def handle_import(self, path, mapping):
         raise NotImplementedError(
-            "Cannot handle datat import from base class.")
+            "Cannot handle data import from the base class.")
 
 
     def handle(self, *args, **kwargs):
@@ -51,6 +59,6 @@ class BaseImportCommand(BaseCommand):
                 sys.exit(1)
         # With DEBUG=True this will DIE.
         settings.DEBUG = False
-        print("Start %s: %s" % (self.object_name, datetime.datetime.now()))
+        print("Start %s: %s" % (self.model_name, datetime.datetime.now()))
         self.handle_import(path, mapping)
-        print("End %s: %s" % (self.object_name, datetime.datetime.now()))
+        print("End %s: %s" % (self.model_name, datetime.datetime.now()))

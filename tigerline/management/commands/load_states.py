@@ -4,7 +4,7 @@ from tigerline.management import BaseImportCommand
 
 
 class Command(BaseImportCommand):
-    object_name = 'state'
+    setting_name = 'TIGERLINE_STATE_MODEL'
 
     default_mapping = {
         "id": "GEOID",
@@ -18,6 +18,8 @@ class Command(BaseImportCommand):
 
     def handle_import(self, path, mapping):
         names = (
+            ('2015', 'tl_2015_us_state.shp'),
+            ('2014', 'tl_2014_us_state.shp'),
             ('2013', 'tl_2013_us_state.shp'),
             ('2012', 'tl_2012_us_state.shp'),
             ('2011', 'tl_2011_us_state.shp'),
@@ -32,5 +34,5 @@ class Command(BaseImportCommand):
         else:
             print('Could not find files.')
             sys.exit(1)
-        print('Found %s %s files.' % (year, self.object_name.title()))
+        print('Found %s States files.' % year)
         self.import_data(path, mapping)

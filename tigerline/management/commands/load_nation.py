@@ -1,15 +1,14 @@
-from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.contrib.gis.db.models import Union
 from django.core.management.base import BaseCommand
 
-from tigerline.models import get_custom_model
+from tigerline.utils import get_tigerline_model
 
 class Command(BaseCommand):
     help = "Creates Nation model of United States using states' geometry."
 
     def handle(self, *args, **kwargs):
-        State = get_custom_model('state')
-        Nation = get_custom_model('nation')
+        State = get_tigerline_model('TIGERLINE_STATE_MODEL')
+        Nation = get_tigerline_model('TIGERLINE_NATION_MODEL')
         states = State.objects.all()
         mpoly = states.aggregate(Union('mpoly'))['mpoly__union']
         try:
