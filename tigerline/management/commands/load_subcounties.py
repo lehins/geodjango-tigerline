@@ -33,7 +33,7 @@ class Command(BaseImportCommand):
             ('2010', 'tl_2010_%s_cousub10.shp')
         )
         State = get_tigerline_model('TIGERLINE_STATE_MODEL')
-        states = State.objects.filter(id__gte=25).order_by('id')
+        states = State.objects.all().order_by('id')
         for state in states:
             year = None
             for year, name in names:
