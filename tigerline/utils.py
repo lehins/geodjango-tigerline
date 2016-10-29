@@ -25,16 +25,11 @@ def _get_complete(setting):
     except KeyError:
         raise ImproperlyConfigured(
             "%s - unknown setting name. See documentation for list of available models"
-            " and their setting names.")
+            " and their setting names." % setting)
 
 
 def is_abstract(setting):
-    try:
-        return getattr(settings, setting, None) != _get_complete(setting)
-    except KeyError:
-        raise ImproperlyConfigured(
-            "%s - unknown setting name. See documentation for list of available models"
-            " and their setting names." % setting)
+    return getattr(settings, setting, None) != _get_complete(setting)
         
 
 def get_tigerline_model_name(setting):
